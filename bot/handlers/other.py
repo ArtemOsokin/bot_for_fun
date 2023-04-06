@@ -6,11 +6,10 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 class ChatWorkStates(StatesGroup):
     chat_on = State()
-    chat_off = State()
 
 
 async def start_cmd(msg: Message, state: FSMContext):
-    await state.set_state(ChatWorkStates.chat_off)
+    await state.reset_state()
     text_list = [
         f'Приветствую, {msg.from_user.full_name}!',
         'Для включения режима ChatGPT введи команду: /start_chat',
