@@ -26,4 +26,4 @@ async def chat_completion(msg: Message):
 
     response = ChatGPT(set.OPENAPI_KEY, set.OPENAPI_ORG).chat_completions(msg.text)
     await msg.answer(response)
-    await msg.answer("*** REPONSE FROM CHATGPT ***")
+    await msg.answer("*** END RESPONSE FROM CHATGPT ***")

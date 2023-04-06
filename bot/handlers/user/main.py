@@ -11,7 +11,6 @@ from bot.handlers.other import ChatWorkStates
 def register_user_handlers(dp: Dispatcher):
     dp.register_message_handler(
         start_chat_completion,
-        state=ChatWorkStates.chat_off,
         commands=['start_chat']
     )
     dp.register_message_handler(
