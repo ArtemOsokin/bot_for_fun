@@ -5,6 +5,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 from bot.database.methods import UserService
 from bot.handlers.content import other
+from bot.handlers.commands import get_start_commands
 
 
 class ChatWorkStates(StatesGroup):
@@ -13,6 +14,7 @@ class ChatWorkStates(StatesGroup):
 
 async def start_cmd(msg: Message, state: FSMContext):
     await state.finish()
+    await msg.bot.set_my_commands(get_start_commands())
 
     user = await UserService(msg).get_user_by_tg_id()
 
@@ -31,6 +33,11 @@ async def help_cmd(msg: Message):
     await msg.answer('\n'.join(other['help']))
 
 
+async def about_cmd(msg: Message):
+    await msg.answer('\n'.join(other['about']))
+
+
 def register_other_handlers(dp: Dispatcher) -> None:
     dp.register_message_handler(start_cmd, filters.CommandStart())
     dp.register_message_handler(help_cmd, filters.CommandHelp())
+    dp.register_message_handler(about_cmd, commands=['about'])

@@ -1,19 +1,22 @@
 from aiogram.dispatcher import FSMContext, Dispatcher
-from aiogram.types import Message
+from aiogram.types import Message, BotCommandScopeDefault
 
 from bot.handlers.other import ChatWorkStates
+from bot.handlers.commands import get_chatgpt_on_commands, get_start_commands
 from bot.services.chatgpt import ChatGPT
 from bot.misc.conf import Settings as set
 
 
 async def start_chat_completion(msg: Message, state: FSMContext):
     await state.set_state(ChatWorkStates.chat_on)
+    await msg.bot.set_my_commands(get_chatgpt_on_commands())
     await msg.answer('Можешь приступать к своим волшебным запросам!')
     await msg.answer('Как надумаешь закончить, введи команду:\n/stop_chat')
 
 
 async def stop_chat_completion(msg: Message, state: FSMContext):
-    await state.reset_state()
+    await state.finish()
+    await msg.bot.set_my_commands(get_start_commands())
     await msg.answer('Заявки на запросы больше не принимаются =) GL HF ')
 
 
