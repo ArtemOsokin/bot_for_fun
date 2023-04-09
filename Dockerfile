@@ -13,4 +13,6 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 # copy project
 COPY . /src/
+EXPOSE 80
+
 CMD ["python", "/src/run.py"]
