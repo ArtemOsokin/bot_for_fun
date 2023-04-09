@@ -13,11 +13,20 @@ from bot.database.models.main import Base
 engine = create_engine(Settings.DB_URL)
 
 
-async def __on_start_up(dp: Dispatcher) -> None:
+async def __on_startup(dp: Dispatcher) -> None:
+    await dp.bot.set_webhook(Settings.WEBHOOK_URL)
     register_all_filters(dp)
     register_all_handlers(dp)
 
     await proceed_schemas(engine, Base.metadata)
+
+
+async def __on_shutdown(dp: Dispatcher) -> None:
+
+    await dp.bot.delete_webhook()
+
+    await dp.storage.close()
+    await dp.storage.wait_closed()
 
 
 def start_bot():
@@ -32,4 +41,12 @@ def start_bot():
     bot['session'] = session_maker
     dp = Dispatcher(bot, storage=MemoryStorage())
 
-    executor.start_polling(dp, skip_updates=True, on_startup=__on_start_up)
+    executor.start_webhook(
+        dispatcher=dp,
+        webhook_path=Settings.WEBHOOK_PATH,
+        on_startup=__on_startup,
+        on_shutdown=__on_shutdown,
+        skip_updates=True,
+        host=Settings.WEBAPP_HOST,
+        port=Settings.WEBAPP_PORT,
+    )
