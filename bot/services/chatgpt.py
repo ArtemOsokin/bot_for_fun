@@ -7,11 +7,15 @@ class ChatGPT:
         self.openai_org = openai_org
         self.model = model
 
-    def chat_completions(self, content: str) -> str:
+    async def chat_completions(self, content: str) -> str:
         openai.organization = self.openai_org
         openai.api_key = self.openai_key
-        completion = openai.ChatCompletion.create(
-            model=self.model,
-            messages=[{"role": "user", "content": content}]
-        )
-        return completion.choices[0].message.content
+        try:
+            completion = openai.ChatCompletion.create(
+                model=self.model,
+                messages=[{"role": "user", "content": content}]
+            )
+            return completion.choices[0].message.content
+        except openai.error.APIConnectionError as err:
+            return f'Ошибка соединения с сервисом OpenAI: {err}'
+

@@ -9,3 +9,5 @@ class Settings:
 
     OPENAPI_KEY: Final = environ.get('OPENAPI_KEY', 'Need openapi_key!')
     OPENAPI_ORG: Final = environ.get('OPENAPI_ORG', 'Need openapi_organisation!')
+
+    DB_URL: Final = environ.get('DB_URL', 'Need sqlite database url')
