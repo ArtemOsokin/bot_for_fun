@@ -8,6 +8,13 @@ from bot.misc.conf import Settings as set
 
 
 async def start_chat_completion(msg: Message, state: FSMContext):
+    """
+    Хендлер активации "режима" отправки запросов в ChatGPT
+    :param msg: объект Message
+    :param state: объект FSMContext
+    :return:
+    """
+
     await state.set_state(ChatWorkStates.chat_on)
     await msg.bot.set_my_commands(get_chatgpt_on_commands())
     await msg.answer('Можешь приступать к своим волшебным запросам!')
@@ -15,12 +22,27 @@ async def start_chat_completion(msg: Message, state: FSMContext):
 
 
 async def stop_chat_completion(msg: Message, state: FSMContext):
+    """
+    Хендлер остановки "режима" отправки запросов в ChatGPT
+
+    :param msg: объект Message
+    :param state: объект FSMContext
+    :return:
+    """
+
     await state.finish()
     await msg.bot.set_my_commands(get_start_commands())
     await msg.answer('Заявки на запросы больше не принимаются =) GL HF ')
 
 
 async def chat_completion(msg: Message):
+    """
+    Хендлер отправки запросов в ChatGPT
+
+    :param msg: объект Message
+    :return:
+    """
+
     if msg.text.startswith('/'):
         return await msg.answer('Нужен запрос к чату, а не команда!'
                                 '... Четкий и понятный! Повтори')
@@ -37,7 +59,13 @@ async def chat_completion(msg: Message):
     await msg.answer("*** END RESPONSE FROM CHATGPT ***")
 
 
-def register_chatgpt_handlers(dp: Dispatcher):
+def register_chatgpt_handlers(dp: Dispatcher) -> None:
+    """
+    Регистрирует хендлеры для работы с ChatGPT
+    :param dp: объект Dispatcher
+    :return: None
+    """
+
     dp.register_message_handler(
         start_chat_completion,
         commands=['start_chat']

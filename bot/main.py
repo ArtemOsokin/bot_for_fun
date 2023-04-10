@@ -15,6 +15,7 @@ engine = create_engine(Settings.DB_URL)
 
 async def __on_startup(dp: Dispatcher) -> None:
     await dp.bot.set_webhook(Settings.WEBHOOK_URL)
+
     register_all_filters(dp)
     register_all_handlers(dp)
 
@@ -30,17 +31,30 @@ async def __on_shutdown(dp: Dispatcher) -> None:
 
 
 def start_bot():
+    """
+    Запуск бота в режиме Webhook
+
+    :return:
+    """
+
     if Settings.DEBUG:
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
         )
 
+    # создание экземпляра бота
     bot = Bot(token=Settings.TOKEN, parse_mode='HTML')
+
+    # создание seession_maker'a и передачи его
+    # в data бота для дальнейшего использования при работе с БД
     session_maker = get_session_maker(engine)
     bot['session'] = session_maker
+
+    # создание экземпляра диспетчера обновлений
     dp = Dispatcher(bot, storage=MemoryStorage())
 
+    # создание вебхукинга
     executor.start_webhook(
         dispatcher=dp,
         webhook_path=Settings.WEBHOOK_PATH,
