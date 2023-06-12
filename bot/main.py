@@ -1,14 +1,14 @@
 import logging
 
-from aiogram.utils import executor
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.utils import executor
 
-from bot.filters import register_all_filters
-from bot.misc import Settings
-from bot.handlers import register_all_handlers
 from bot.database.main import create_engine, get_session_maker, proceed_schemas
 from bot.database.models.main import Base
+from bot.filters import register_all_filters
+from bot.handlers import register_all_handlers
+from bot.misc import Settings
 
 engine = create_engine(Settings.DB_URL)
 
@@ -23,7 +23,6 @@ async def __on_startup(dp: Dispatcher) -> None:
 
 
 async def __on_shutdown(dp: Dispatcher) -> None:
-
     await dp.bot.delete_webhook()
 
     await dp.storage.close()
@@ -39,8 +38,7 @@ def start_bot():
 
     if Settings.DEBUG:
         logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+            level=logging.INFO, format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
         )
 
     # создание экземпляра бота

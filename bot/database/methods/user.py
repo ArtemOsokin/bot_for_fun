@@ -30,7 +30,7 @@ class UserService:
             tg_id=self.tg_id,
             first_name=self.first_name,
             last_name=self.last_name,
-            username=self.username
+            username=self.username,
         )
 
         session = self.msg.bot.get('session')
@@ -60,5 +60,5 @@ class UserService:
 
         async with session() as session:
             result = await session.execute(stmt)
-            users = result.scalars()
-            return users.first()
+            user = result.one_or_none()
+            return user

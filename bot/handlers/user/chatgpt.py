@@ -1,10 +1,10 @@
-from aiogram.dispatcher import FSMContext, Dispatcher
-from aiogram.types import Message, BotCommandScopeDefault
+from aiogram.dispatcher import Dispatcher, FSMContext
+from aiogram.types import BotCommandScopeDefault, Message
 
-from bot.handlers.other import ChatWorkStates
 from bot.handlers.commands import get_chatgpt_on_commands, get_start_commands
+from bot.handlers.other import ChatWorkStates
+from bot.misc.conf import settings as set
 from bot.services.chatgpt import ChatGPT
-from bot.misc.conf import Settings as set
 
 
 async def start_chat_completion(msg: Message, state: FSMContext):
@@ -44,16 +44,16 @@ async def chat_completion(msg: Message):
     """
 
     if msg.text.startswith('/'):
-        return await msg.answer('Нужен запрос к чату, а не команда!'
-                                '... Четкий и понятный! Повтори')
+        return await msg.answer(
+            'Нужен запрос к чату, а не команда!' '... Четкий и понятный! Повтори'
+        )
     await msg.answer('Запрос отправлен! Ждём ответа...')
     await msg.answer('Жмякать никуда не надо! Просто подожди :3')
 
     # todo: uncomment ChatGPT
-    response = await ChatGPT(
-        set.OPENAPI_KEY,
-        set.OPENAPI_ORG
-    ).chat_completions(msg.text)
+    chat_gpt_service = ChatGPT(set.OPENAPI_KEY, set.OPENAPI_ORG)
+
+    response = await chat_gpt_service.chat_completions(msg.text)
 
     await msg.answer(response)
     await msg.answer("*** END RESPONSE FROM CHATGPT ***")
@@ -66,16 +66,8 @@ def register_chatgpt_handlers(dp: Dispatcher) -> None:
     :return: None
     """
 
+    dp.register_message_handler(start_chat_completion, commands=['start_chat'])
     dp.register_message_handler(
-        start_chat_completion,
-        commands=['start_chat']
+        stop_chat_completion, state=ChatWorkStates.chat_on, commands=['stop_chat']
     )
-    dp.register_message_handler(
-        stop_chat_completion,
-        state=ChatWorkStates.chat_on,
-        commands=['stop_chat']
-    )
-    dp.register_message_handler(
-        chat_completion,
-        state=ChatWorkStates.chat_on
-    )
+    dp.register_message_handler(chat_completion, state=ChatWorkStates.chat_on)

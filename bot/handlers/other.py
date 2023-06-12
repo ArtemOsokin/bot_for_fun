@@ -1,11 +1,11 @@
 from aiogram import Dispatcher, filters
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import Message
-from aiogram.dispatcher.filters.state import StatesGroup, State
 
 from bot.database.methods import UserService
-from bot.handlers.content import answers
 from bot.handlers.commands import get_start_commands
+from bot.handlers.content import answers
 
 
 class ChatWorkStates(StatesGroup):
@@ -30,13 +30,9 @@ async def start_cmd(msg: Message, state: FSMContext):
 
     if not user:
         user = await UserService(msg).create_user()
-        await msg.answer('\n'.join(
-            [f'Приветствую, {user.first_name}!'] + answers['start'])
-        )
+        await msg.answer('\n'.join([f'Приветствую, {user.first_name}!'] + answers['start']))
     else:
-        await msg.answer('\n'.join(
-            [f'С возвращением, {user.first_name}!'] + answers['start'])
-        )
+        await msg.answer('\n'.join([f'С возвращением, {user.first_name}!'] + answers['start']))
 
 
 async def help_cmd(msg: Message):

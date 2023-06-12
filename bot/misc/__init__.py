@@ -1,1 +1,1 @@
-from bot.misc.conf import Settings
+from bot.misc.conf import settings

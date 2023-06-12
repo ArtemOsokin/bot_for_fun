@@ -1,5 +1,4 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 
 
 def create_engine(db_uri: str) -> AsyncEngine:
@@ -14,4 +13,3 @@ async def proceed_schemas(engine: AsyncEngine, metadata) -> None:
 
 def get_session_maker(engine: AsyncEngine) -> async_sessionmaker:
     return async_sessionmaker(engine, expire_on_commit=False, future=True)
-
