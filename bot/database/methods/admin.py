@@ -11,6 +11,5 @@ class AdminDBService(BaseDBService):
 
     async def get_users(self) -> tuple[User]:
         async with self.session() as session:
-            result = await session.execute(select(User))
-            users = result.first()
+            users = await session.scalars(select(User))
         return users
