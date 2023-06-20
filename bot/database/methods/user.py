@@ -60,6 +60,6 @@ class UserDBService(BaseDBService):
         stmt = select(User).where(User.tg_id == self.tg_id)
 
         async with self.session() as session:
-            result = await session.execute(stmt)
+            result = await session.scalars(stmt)
             user = result.one_or_none()
-            return user
+        return user
