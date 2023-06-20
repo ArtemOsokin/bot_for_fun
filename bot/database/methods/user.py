@@ -1,10 +1,13 @@
+import logging
+
 from aiogram import types
 from sqlalchemy import select
 
+from bot.database.methods.base import BaseDBService
 from bot.database.models.user import User
 
 
-class UserService:
+class UserDBService(BaseDBService):
     """
     Сервис для взаимодействия БД с данными пользователя
     """
@@ -14,6 +17,7 @@ class UserService:
         :param msg: объект Message телеграмм
         """
 
+        super().__init__(msg)
         self.msg = msg
         self.tg_id = self.msg.from_user.id
         self.first_name = self.msg.from_user.first_name
@@ -33,14 +37,13 @@ class UserService:
             username=self.username,
         )
 
-        session = self.msg.bot.get('session')
-
-        async with session() as session:
+        async with self.session() as session:
             async with session.begin():
                 session.add(user)
                 try:
                     await session.commit()
-                except Exception:
+                except Exception as e:
+                    logging.error(e)
                     await session.rollback()
         return user
 
@@ -56,9 +59,7 @@ class UserService:
 
         stmt = select(User).where(User.tg_id == self.tg_id)
 
-        session = self.msg.bot.get('session')
-
-        async with session() as session:
+        async with self.session() as session:
             result = await session.execute(stmt)
             user = result.one_or_none()
             return user

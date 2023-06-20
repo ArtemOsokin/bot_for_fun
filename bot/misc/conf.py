@@ -20,5 +20,7 @@ class Settings:
 
     DB_URL: Final = environ.get('DB_URL', 'Need sqlite database url')
 
+    ADMINS: list[int] = list(map(int, environ.get('ADMINS').split(',')))
+
 
 settings = Settings()

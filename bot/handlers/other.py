@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import Message
 
-from bot.database.methods import UserService
+from bot.database.methods import UserDBService
 from bot.handlers.commands import get_start_commands
 from bot.handlers.content import answers
 
@@ -26,10 +26,10 @@ async def start_cmd(msg: Message, state: FSMContext):
     await state.finish()
     await msg.bot.set_my_commands(get_start_commands())
 
-    user = await UserService(msg).get_user_by_tg_id()
+    user = await UserDBService(msg).get_user_by_tg_id()
 
     if not user:
-        user = await UserService(msg).create_user()
+        user = await UserDBService(msg).create_user()
         await msg.answer('\n'.join([f'Приветствую, {user.first_name}!'] + answers['start']))
     else:
         await msg.answer('\n'.join([f'С возвращением, {user.first_name}!'] + answers['start']))
