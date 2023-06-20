@@ -1,17 +1,5 @@
-from typing import (
-    List,
-    Optional
-)
-
-from sqlalchemy import (
-    Integer,
-    String
-)
-from sqlalchemy.orm import (
-    Mapped,
-    mapped_column,
-    relationship
-)
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 from bot.database.models.main import Base
 
@@ -26,5 +14,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(30), nullable=True)
 
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, tg_id={self.tg_id}, " \
-               f"name={self.first_name!r}, fullname={self.last_name!r})"
+        return (
+            f"User(id={self.id!r}, tg_id={self.tg_id}, "
+            f"name={self.first_name!r}, fullname={self.last_name!r})"
+        )

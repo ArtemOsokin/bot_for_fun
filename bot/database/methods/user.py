@@ -1,36 +1,49 @@
+import logging
+
 from aiogram import types
 from sqlalchemy import select
 
+from bot.database.methods.base import BaseDBService
 from bot.database.models.user import User
 
 
-class UserService:
+class UserDBService(BaseDBService):
+    """
+    Сервис для взаимодействия БД с данными пользователя
+    """
+
     def __init__(self, msg: types.Message) -> None:
         """
         :param msg: объект Message телеграмм
         """
+
+        super().__init__(msg)
         self.msg = msg
+        self.tg_id = self.msg.from_user.id
+        self.first_name = self.msg.from_user.first_name
+        self.last_name = self.msg.from_user.last_name
+        self.username = self.msg.from_user.username
 
     async def create_user(self) -> User:
         """
         Создаёт пользователя в базе данных
-        :return None:
+        :return User: объект пользователя
         """
+
         user = User(
-            tg_id=self.msg.from_user.id,
-            first_name=self.msg.from_user.first_name,
-            last_name=self.msg.from_user.last_name,
-            username=self.msg.from_user.username
+            tg_id=self.tg_id,
+            first_name=self.first_name,
+            last_name=self.last_name,
+            username=self.username,
         )
 
-        session = self.msg.bot.get('session')
-
-        async with session() as session:
+        async with self.session() as session:
             async with session.begin():
                 session.add(user)
                 try:
                     await session.commit()
-                except Exception:
+                except Exception as e:
+                    logging.error(e)
                     await session.rollback()
         return user
 
@@ -38,17 +51,15 @@ class UserService:
         """
         Возвращает пользователя по Юзер ИД Телеграмма
 
-        :return None|User:
+        :return None | User: Объект пользователя
 
         >>> get_user_by_tg_id(123)
         User(id=1, tg_id=123, first_name='John, last_name='Doe', ...)
         """
 
-        stmt = select(User).where(User.tg_id==self.msg.from_user.id)
+        stmt = select(User).where(User.tg_id == self.tg_id)
 
-        session = self.msg.bot.get('session')
-
-        async with session() as session:
+        async with self.session() as session:
             result = await session.execute(stmt)
-            users = result.scalars()
-            return users.first()
+            user = result.one_or_none()
+            return user
