@@ -63,3 +63,21 @@ class UserDBService(BaseDBService):
             result = await session.scalars(stmt)
             user = result.one_or_none()
         return user
+
+    async def incr_gpt_count_req(self):
+        """
+        Увеличивает количество использованных запросов юзера на 1
+
+        """
+
+        stmt = select(User).where(User.tg_id == self.tg_id)
+
+        async with self.session() as session:
+            result = await session.scalars(stmt)
+            user = result.one_or_none()
+            print(user.gpt_count_requests)
+            user.gpt_count_requests += 1
+            print(user.gpt_count_requests)
+            await session.flush()
+            await session.commit()
+        return user

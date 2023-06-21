@@ -1,6 +1,7 @@
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.types import BotCommandScopeDefault, Message
 
+from bot.database.methods import UserDBService
 from bot.handlers.commands import get_chatgpt_on_commands, get_start_commands
 from bot.handlers.other import ChatWorkStates
 from bot.misc.conf import settings as set
@@ -56,6 +57,8 @@ async def chat_completion(msg: Message):
     response = await chat_gpt_service.chat_completions(msg.text)
 
     await msg.answer(response)
+    user_service = UserDBService(msg)
+    await user_service.incr_gpt_count_req()
     await msg.answer("*** END RESPONSE FROM CHATGPT ***")
 
 

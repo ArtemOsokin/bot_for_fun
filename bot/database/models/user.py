@@ -12,3 +12,4 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(String(30), nullable=True)
     last_name: Mapped[str] = mapped_column(String(30), nullable=True)
     username: Mapped[str] = mapped_column(String(30), nullable=True)
+    gpt_count_requests: Mapped[int] = mapped_column(Integer, default=0)
