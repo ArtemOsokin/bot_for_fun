@@ -7,7 +7,8 @@ def create_engine(db_uri: str) -> AsyncEngine:
 
 async def proceed_schemas(engine: AsyncEngine, metadata) -> None:
     async with engine.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
+        # TODO Uncomment before debug
+        # await conn.run_sync(metadata.drop_all)
         await conn.run_sync(metadata.create_all)
 
 
