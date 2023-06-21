@@ -34,3 +34,25 @@ class ChatGPT:
             return completion.choices[0].message.content
         except openai.error.APIConnectionError as err:
             return f'Ошибка соединения с сервисом OpenAI: {err}'
+
+    async def create_image(self, prompt: str, n: int = 1, size: str = "1024x1024") -> str:
+        """
+        Функция отправки запроса в ChatGPT для генерации изображения
+
+        :param prompt: Текстовый запрос к сервису ChatGPT
+        :param n: Количество изображений
+        :param size: Размер изображения
+        :return: Текстовый ответ с url
+        """
+
+        openai.organization = self.openai_org
+        openai.api_key = self.openai_key
+        try:
+            image_response = openai.Image.create(
+              prompt=prompt,
+              n=n,
+              size=size
+            )
+            return image_response
+        except openai.error.APIConnectionError as err:
+            return f'Ошибка соединения с сервисом OpenAI: {err}'
